@@ -1,0 +1,4 @@
+- ignore: { name: "Eta reduce" }
+- ignore: { name: "Functor law" }
+- ignore: { name: "Use camelCase" }
+- ignore: { name: "Use const" }
