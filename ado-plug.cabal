@@ -33,7 +33,8 @@ test-suite ado-plug-test
       , base ^>=4.21.0.0
       , ado-plug:ado-plug
     hs-source-dirs: test
-    default-language: GHC2021
+    default-language: Haskell2010
     default-extensions:
-      , QualifiedDo
       , DerivingStrategies
+      , GeneralizedNewtypeDeriving
+      , QualifiedDo

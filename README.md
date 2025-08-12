@@ -5,23 +5,50 @@ Use do-notation with applicative functors.
 ```hs
 {-# OPTIONS_GHC -fplugin=ADo #-}
 {-# LANGUAGE QualifiedDo #-}
-module Main where
+module Example where
 
-newtype W a b = W (a, b) deriving newtype (Show, Eq, Functor, Applicative)
+egPure :: (Applicative m) => m ()
+egPure = ADo.do ()
 
-eg :: W [String] Int
-eg = ADo.do
-  a <- W (["A"], 1 :: Int)
-  W (["X"], ())
-  b <- W (["B"], 2 :: Int)
-  let e = a + b
-  c <- W (["C"], 3 :: Int)
-  a + b + e + c
+egFmap :: (Functor m) => m x -> m (x, x)
+egFmap src = ADo.do
+  x <- src
+  (x, x)
 
-main :: IO ()
-main = print eg -- (["A", "X", "B", "C"], 9)
+egAp :: (Applicative m) => m x -> m (x, x)
+egAp src = ADo.do
+  x <- src
+  y <- src
+  (x, y)
 
--- $> main
+egLet :: (Applicative m) => m x -> m (x, x)
+egLet src = ADo.do
+  let xx = (x, x)
+  let yy = (y, y)
+  x <- src
+  y <- src
+  (fst xx, snd yy)
+```
+
+Check test/Main.hs for more examples.
+
+
+### What are errors like?
+
+Should be reasonable.
+
+```hs
+eg0 = ADo.do
+  a <- pure 0
+  b <- pure a
+  b
+```
+
+```hs
+    Variable not in scope: a :: Int
+   |
+17 |   b <- pure a
+   |             ^
 ```
 
 
