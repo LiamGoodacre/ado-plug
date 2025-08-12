@@ -9,7 +9,7 @@ eg = ADo.do
   b <- W (["B"], 2 :: Int)
   let e = a + b
   c <- W (["C"], 3 :: Int)
-  pure (a + b + e + c)
+  a + b + e + c
 
 main :: IO ()
 main = print eg -- (["A", "X", "B", "C"], 9)

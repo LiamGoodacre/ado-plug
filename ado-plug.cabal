@@ -24,7 +24,6 @@ library
     default-extensions:
       , BlockArguments
       , OverloadedStrings
-      , ScopedTypeVariables
 
 test-suite ado-plug-test
     import: warnings

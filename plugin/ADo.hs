@@ -12,7 +12,7 @@ import GHC.Hs
   ( ExprLStmt,
     GhcPs,
     HsDoFlavour (DoExpr),
-    HsExpr (HsApp, HsDo, HsVar),
+    HsExpr (HsDo),
     HsModule,
     HsParsedModule (hpm_module),
     LHsExpr,
@@ -32,9 +32,6 @@ import GHC.Plugins
     ParsedResult (parsedResultModule),
     Plugin (parsedResultAction),
     defaultPlugin,
-    ppr,
-    rdrNameOcc,
-    showSDocUnsafe,
   )
 import Prelude
 
@@ -68,14 +65,8 @@ rewriteApplicatively stmts = do
           BodyStmt _ bindExpr _ _ -> ([nlWildPat], [bindExpr], [])
           _ -> ([], [], [lstmt])
 
-  (strippedFinalStmt :: ExprLStmt GhcPs) <- case last stmts of
-    L bodyAnn (BodyStmt noExt0 (L _ bodyExpr) noExt1 noExt2) -> case bodyExpr of
-      HsApp _ (L _ (HsVar _ (L _ fn))) arg
-        | rdrNameOcc fn == rdrNameOcc pure_RDR ->
-            pure $ L bodyAnn (BodyStmt noExt0 arg noExt1 noExt2)
-        | otherwise -> liftIO $ fail ("rewriteApplicatively: last stmt is not of form `pure x`" <> showSDocUnsafe (ppr fn))
-      _ -> liftIO $ fail "rewriteApplicatively: last stmt is not of form `pure x`"
-    _ -> liftIO $ fail "rewriteApplicatively: last stmt is not a BodyStmt"
+  let strippedFinalStmt :: ExprLStmt GhcPs
+      strippedFinalStmt = last stmts
 
   let apFn :: LHsExpr GhcPs
       apFn = mkHsLam (L noAnn fnPatterns) (mkDo otherStmts strippedFinalStmt)
